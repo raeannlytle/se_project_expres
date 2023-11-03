@@ -1,10 +1,13 @@
 {
   "name": "se_project_express",
   "version": "1.0.0",
-  "description": "Sprint 12 ",
+  "description": "Sprint 12",
   "main": "index.js",
   "scripts": {
-    "test": "test"
+    "test": "test",
+    "lint": "npx eslint .",
+    "start": "node app.js",
+    "dev": "nodemon app.js"
   },
   "author": "Raeann Lytle",
   "license": "ISC",
@@ -16,6 +19,7 @@
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-import": "^2.29.0",
+    "nodemon": "^3.0.1",
     "prettier": "^3.0.3"
   }
 }
