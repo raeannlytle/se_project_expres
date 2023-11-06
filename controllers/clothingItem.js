@@ -18,7 +18,7 @@ const getItems = (req, res) => {
 };
 
 const updateItem = (req, res) => {
-  const {itemId} = req.param;
+  const {itemId} = req.params;
   const {imageURL} = req.body;
   ClothingItem.findByIdAndUpdate(itemId, {$set: {imageURL}}).orFail().then((item) => res.status(200).send({data: item}))
   .catch((e) => {
