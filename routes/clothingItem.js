@@ -8,4 +8,11 @@ const { createItem } = require('../controllers/clothingItem');
 //Create
 router.post('/', createItem);
 
+//Read
+
+
+//Update
+
+//Delete
+
 module.exports = router;

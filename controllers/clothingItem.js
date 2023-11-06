@@ -10,6 +10,14 @@ const createItem = (req, res) => {
   })
 };
 
+const getItems = (req, res) => {
+  ClothingItem.find({}).then((items) => res.status(200).send(items))
+  .catch((e) => {
+    res.status(500).send({message: 'Error from getItems', e})
+  })
+}
+
 module.exports = {
-  createItem
+  createItem,
+  getItems
 }
