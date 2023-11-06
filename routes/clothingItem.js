@@ -12,7 +12,7 @@ router.post('/', createItem);
 router.get('/', getItems);
 
 //Update
-router.put('/', updateItem);
+router.put('/:itemId', updateItem);
 
 //Delete
 
