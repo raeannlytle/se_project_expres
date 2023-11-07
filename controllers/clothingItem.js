@@ -39,19 +39,29 @@ const deleteItem = (req, res) => {
 }
 
 const likeItem = (req, res) => {
-  const {itemId} = req.params;
   const {_id: userId} = req.user;
+  const {itemId} = req.params;
 
   ClothingItem.findByIdAndUpdate(itemId, {$addToSet: {likes: userId}}, {new:true}).then((item) => res.status(200).send({data:item}))
   .catch((e) => {res.status(500).send({message: 'Error from likeItem', e});
 });
 };
 
+const unlikeItem = (req, res) => {
+  const {_id: userId} = req.user;
+  const {itemId} = req.params;
+
+  ClothingItem.findByIdAndUpdate(itemId, {$pull: {likes: userId}}, {new: true}).then((item) => res.status(200).send({data: item}))
+  .catch((e) => {res.status(500).send({message: 'Error from unlikeItem', e});
+});
+}
 
 
 module.exports = {
   createItem,
   getItems,
   updateItem,
-  deleteItem
+  deleteItem,
+  likeItem,
+  unlikeItem
 }
