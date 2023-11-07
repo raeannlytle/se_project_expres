@@ -8,6 +8,10 @@ const createItem = (req, res) => {
   }).catch((e) => {
     res.status(500).send({message: 'Error from createItem', e })
   })
+
+  module.exports.createClothingItem = (req, res) => {
+    console.log(req.user._id);// _id will become accessible
+  };
 };
 
 const getItems = (req, res) => {
