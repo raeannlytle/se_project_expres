@@ -24,10 +24,19 @@ const updateItem = (req, res) => {
   .catch((e) => {
     res.status(500).send({message: 'Error from updateItem', e})
   })
+};
+
+const deleteItem = (req, res) => {
+  const {itemId} = req.params;
+  ClothingItem.findByIdAndDelete(itemId).orFail().then((item) => res.status(200).send({}))
+  .catch((e) => {
+    res.status(500).send({message: 'Error from deleteItem', e})
+  })
 }
 
 module.exports = {
   createItem,
   getItems,
-  updateItem
+  updateItem,
+  deleteItem
 }
