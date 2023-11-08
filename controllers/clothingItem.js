@@ -22,24 +22,6 @@ const getItems = (req, res) => {
     .catch(() => res.status(SERVER_ERROR).send({ message: "Error from getItems" }));
 };
 
-const updateItem = (req, res) => {
-  const {itemId} = req.params;
-  const {imageUrl} = req.body;
-  ClothingItem.findByIdAndUpdate(itemId, {$set: {imageUrl}})
-  .orFail(() => ({name: "DocumentNotFoundError"}))
-  .then((item) => res.status(200).send({data: item}))
-  .catch((e) => {
-    if (e.name === "DocumentNotFoundError") {
-      res.status(NOT_FOUND).send({message: "Item not found"})
-    } else if (e.name === "ValidationError") {
-      res.status(BAD_REQUEST).send({message: "Validation error"})
-    } else if (e.name === "CastError") {
-      res.status(BAD_REQUEST).send({message: "Invalid ID format"})
-    } else {
-      res.status(SERVER_ERROR).send({message: "Error from updateItem"})
-    }
-  })
-};
 
 const deleteItem = (req, res) => {
   const {itemId} = req.params;
