@@ -1,10 +1,6 @@
 const { response } = require('express');
 const ClothingItem = require('../models/clothingItem');
-
-const OK = 200;
-const BAD_REQUEST = 400;
-const NOT_FOUND = 404;
-const SERVER_ERROR = 500;
+const { BAD_REQUEST, NOT_FOUND, SERVER_ERROR } = require("../utils/errors");
 
 const createItem = (req, res) => {
   const {name, weather, imageUrl} = req.body;
