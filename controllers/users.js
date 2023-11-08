@@ -7,12 +7,18 @@ const getUser = (req, res) => {
   User.findById(userId)
     .then((user) => {
       if (!user) {
-        res.status(NOT_FOUND).send({ message: "User not found" });
+        res.status(NOT_FOUND).send({message: "User not found"});
       } else {
         res.status(200).send({ data: user });
       }
     })
-    .catch(() => res.status(SERVER_ERROR).send({ message: "Error from getUser" }));
+    .catch((e) => {
+      if (e.name === 'CastError') {
+        res.status(BAD_REQUEST).send({message: "Invalid ID format"});
+      } else {
+        res.status(SERVER_ERROR).send({message: "Error from getUser"});
+      }
+    });
 };
 
 const getUsers = (req, res) => {
@@ -36,7 +42,13 @@ const createUser = (req, res) => {
   .then((user) => {
     res.status(200).send({data: user});
   })
-  .catch(() => res.status(SERVER_ERROR).send({message: "Error from createUser"}))
+  .catch((e) => {
+    if (e.name === 'ValidationError') {
+      res.status(BAD_REQUEST).send({message: "Validation error"});
+    } else {
+      res.status(SERVER_ERROR).send({message: "Error from createUser"});
+    }
+  });
 }
 
 module.exports = {
