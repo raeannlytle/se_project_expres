@@ -12,12 +12,12 @@ router.post('/', createItem);
 router.get('/', getItems);
 
 // Delete
-router.delete('/:userId', deleteItem);
+router.delete('/:itemId', deleteItem);
 
 // Like
-router.put('/:userId/likes', likeItem);
+router.put('/:itemId/likes', likeItem);
 
 // Unlike
-router.delete('/:userId/likes', unlikeItem);
+router.delete('/:itemId/likes', unlikeItem);
 
 module.exports = router;
