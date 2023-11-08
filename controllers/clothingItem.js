@@ -1,6 +1,5 @@
-const { response } = require('express');
-const ClothingItem = require('../models/clothingItem');
 const { BAD_REQUEST, NOT_FOUND, SERVER_ERROR } = require("../utils/errors");
+const ClothingItem = require('../models/clothingItem');
 
 const createItem = (req, res) => {
   const {name, weather, imageUrl} = req.body;
@@ -17,7 +16,7 @@ const createItem = (req, res) => {
 };
 
 const getItems = (req, res) => {
-  ClothingItem.find({}).then((items) => res.status(OK).send(items))
+  ClothingItem.find({}).then((items) => res.status(200).send(items))
   .catch((e) => {
     if (e.name === "ValidationError") {
       res.status(BAD_REQUEST).send({message: "Validation error"});
@@ -32,7 +31,7 @@ const updateItem = (req, res) => {
   const {imageUrl} = req.body;
   ClothingItem.findByIdAndUpdate(itemId, {$set: {imageUrl}})
   .orFail(() => ({name: "DocumentNotFoundError"}))
-  .then((item) => res.status(OK).send({data: item}))
+  .then((item) => res.status(200).send({data: item}))
   .catch((e) => {
     if (e.name === "DocumentNotFoundError") {
       res.status(NOT_FOUND).send({message: "Item not found"})
@@ -50,7 +49,7 @@ const deleteItem = (req, res) => {
   const {itemId} = req.params;
   ClothingItem.findByIdAndDelete(itemId)
   .orFail(() => ({name: "DocumentNotFoundError"}))
-  .then((item) => res.status(OK).send({}))
+  .then(() => res.status(200).send({}))
   .catch((e) => {
     if (e.name === "DocumentNotFoundError") {
       res.status(NOT_FOUND).send({message: "Item not found"})
@@ -70,7 +69,7 @@ const likeItem = (req, res) => {
 
   ClothingItem.findByIdAndUpdate(itemId, {$addToSet: {likes: userId}}, {new:true})
   .orFail(() => ({name: "DocumentNotFoundError"}))
-  .then((item) => res.status(OK).send({data:item}))
+  .then((item) => res.status(200).send({data:item}))
   .catch((e) => {
     if (e.name === "DocumentNotFoundError") {
       res.status(NOT_FOUND).send({message: "Item not found"})
@@ -90,7 +89,7 @@ const unlikeItem = (req, res) => {
 
   ClothingItem.findByIdAndUpdate(itemId, {$pull: {likes: userId}}, {new: true})
   .orFail(() => ({name: "DocumentNotFoundError"}))
-  .then((item) => res.status(OK).send({data: item}))
+  .then((item) => res.status(200).send({data: item}))
   .catch((e) => {
     if (e.name === "DocumentNotFoundError") {
       res.status(NOT_FOUND).send({message: "Item not found"})
