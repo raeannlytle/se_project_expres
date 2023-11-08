@@ -88,5 +88,4 @@ module.exports = {
   deleteItem,
   likeItem,
   unlikeItem,
-  getUser,
 }
