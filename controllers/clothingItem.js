@@ -7,9 +7,9 @@ const NOT_FOUND = 404;
 const SERVER_ERROR = 500;
 
 const createItem = (req, res) => {
-  const {name, weather, imageURL} = req.body;
+  const {name, weather, imageUrl} = req.body;
 
-  ClothingItem.create({name, weather, imageURL}).then((item) => {
+  ClothingItem.create({name, weather, imageUrl}).then((item) => {
     res.send({data:item})
   }).catch((e) => {
     if (e.name === "ValidationError") {
@@ -33,8 +33,8 @@ const getItems = (req, res) => {
 
 const updateItem = (req, res) => {
   const {itemId} = req.params;
-  const {imageURL} = req.body;
-  ClothingItem.findByIdAndUpdate(itemId, {$set: {imageURL}})
+  const {imageUrl} = req.body;
+  ClothingItem.findByIdAndUpdate(itemId, {$set: {imageUrl}})
   .orFail(() => ({name: "DocumentNotFoundError"}))
   .then((item) => res.status(OK).send({data: item}))
   .catch((e) => {
