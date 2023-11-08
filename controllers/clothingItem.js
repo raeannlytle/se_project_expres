@@ -66,7 +66,7 @@ const unlikeItem = (req, res) => {
   const {itemId} = req.params;
 
   ClothingItem.findByIdAndUpdate(itemId, {$pull: {likes: userId}}, {new: true})
-  .orFail(() => ({name: "DocumentNotFoundError"}))
+  .orFail()
   .then((item) => res.status(200).send({data: item}))
   .catch((e) => {
     if (e.name === "DocumentNotFoundError") {
