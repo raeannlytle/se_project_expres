@@ -26,7 +26,7 @@ const getItems = (req, res) => {
 const deleteItem = (req, res) => {
   const {itemId} = req.params;
   ClothingItem.findByIdAndDelete(itemId)
-  .orFail(() => ({name: "DocumentNotFoundError"}))
+  .orFail()
   .then(() => res.status(200).send({}))
   .catch((e) => {
     if (e.name === "DocumentNotFoundError") {
@@ -46,7 +46,7 @@ const likeItem = (req, res) => {
   const {itemId} = req.params;
 
   ClothingItem.findByIdAndUpdate(itemId, {$addToSet: {likes: userId}}, {new:true})
-  .orFail(() => ({name: "DocumentNotFoundError"}))
+  .orFail()
   .then((item) => res.status(200).send({data:item}))
   .catch((e) => {
     if (e.name === "DocumentNotFoundError") {
