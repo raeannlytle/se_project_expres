@@ -34,7 +34,7 @@ const createUser = (req, res) => {
 
   newUser.save()
   .then((user) => {
-    res.status(200).send(({data: user}));
+    res.status(200).send({data: user});
   })
   .catch(() => res.status(SERVER_ERROR).send({message: "Error from createUser"}))
 }
