@@ -8,7 +8,7 @@ const {getUsers, getUser, createUser} = require('../controllers/users');
 router.post('/', createUser);
 
 // Get
-router.get('/users', getUsers);
-router.get('/users/:userId', getUser);
+router.get('/', getUsers);
+router.get('/:userId', getUser);
 
 module.exports = router;
