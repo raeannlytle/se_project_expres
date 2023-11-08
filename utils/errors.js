@@ -1,8 +1,8 @@
-const handleErrorResponse = (res, e) => {
-  const BAD_REQUEST = 400;
-  const NOT_FOUND = 404;
-  const SERVER_ERROR = 500;
+const BAD_REQUEST = 400;
+const NOT_FOUND = 404;
+const SERVER_ERROR = 500;
 
+const handleErrorResponse = (res, e) => {
   if (e.name === 'InvalidData') {
     console.error('InvalidData Error:');
     return res.status(BAD_REQUEST).send({ message: 'Data is invalid' });
@@ -22,6 +22,10 @@ const handleErrorResponse = (res, e) => {
   return res.status(SERVER_ERROR).send({ message: 'Internal Server Error' });
 };
 
+
 module.exports = {
+  BAD_REQUEST,
+  NOT_FOUND,
+  SERVER_ERROR,
   handleErrorResponse,
 };
