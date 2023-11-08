@@ -17,14 +17,9 @@ const createItem = (req, res) => {
 };
 
 const getItems = (req, res) => {
-  ClothingItem.find({}).then((items) => res.status(200).send(items))
-  .catch((e) => {
-    if (e.name === "ValidationError") {
-      res.status(BAD_REQUEST).send({message: "Validation error"});
-    } else {
-      res.status(SERVER_ERROR).send({message: "Error from getItems"})
-    }
-  })
+  ClothingItem.find({})
+    .then((items) => res.status(200).send(items))
+    .catch(() => res.status(SERVER_ERROR).send({ message: "Error from getItems" }));
 };
 
 const updateItem = (req, res) => {
