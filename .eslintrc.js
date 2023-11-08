@@ -4,13 +4,12 @@ module.exports = {
     commonjs: true,
     es2021: true,
   },
-  // update the extensions
   extends: ["eslint:recommended", "airbnb-base", "prettier"],
   overrides: [],
   parserOptions: {
     ecmaVersion: "latest",
   },
   rules: {
-    camelcase: ["error", { properties: "never", ignoreDestructuring: true }],
+    camelcase: ["error", { properties: "never", ignoreDestructuring: true, allow: ["_id"] }],
   },
 };
