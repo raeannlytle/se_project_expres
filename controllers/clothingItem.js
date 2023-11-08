@@ -3,6 +3,7 @@ const ClothingItem = require('../models/clothingItem');
 
 const OK = 200;
 const BAD_REQUEST = 400;
+const NOT_FOUND = 404;
 const SERVER_ERROR = 500;
 
 const createItem = (req, res) => {
@@ -33,9 +34,13 @@ const getItems = (req, res) => {
 const updateItem = (req, res) => {
   const {itemId} = req.params;
   const {imageURL} = req.body;
-  ClothingItem.findByIdAndUpdate(itemId, {$set: {imageURL}}).orFail().then((item) => res.status(OK).send({data: item}))
+  ClothingItem.findByIdAndUpdate(itemId, {$set: {imageURL}})
+  .orFail(() => ({name: "DocumentNotFoundError"}))
+  .then((item) => res.status(OK).send({data: item}))
   .catch((e) => {
-    if (e.name === "ValidationError") {
+    if (e.name === "DocumentNotFoundError") {
+      res.status(NOT_FOUND).send({message: "Item not found"})
+    } else if (e.name === "ValidationError") {
       res.status(BAD_REQUEST).send({message: "Validation error"});
     } else {
       res.status(SERVER_ERROR).send({message: "Error from updateItem"})
@@ -45,9 +50,13 @@ const updateItem = (req, res) => {
 
 const deleteItem = (req, res) => {
   const {itemId} = req.params;
-  ClothingItem.findByIdAndDelete(itemId).orFail().then((item) => res.status(OK).send({}))
+  ClothingItem.findByIdAndDelete(itemId)
+  .orFail(() => ({name: "DocumentNotFoundError"}))
+  .then((item) => res.status(OK).send({}))
   .catch((e) => {
-    if (e.name === "ValidationError") {
+    if (e.name === "DocumentNotFoundError") {
+      res.status(NOT_FOUND).send({message: "Item not found"})
+    } else if (e.name === "ValidationError") {
       res.status(BAD_REQUEST).send({message: "Validation error"});
     } else {
       res.status(SERVER_ERROR).send({message: "Error from deleteItem"})
@@ -59,9 +68,13 @@ const likeItem = (req, res) => {
   const {_id: userId} = req.user;
   const {itemId} = req.params;
 
-  ClothingItem.findByIdAndUpdate(itemId, {$addToSet: {likes: userId}}, {new:true}).then((item) => res.status(OK).send({data:item}))
+  ClothingItem.findByIdAndUpdate(itemId, {$addToSet: {likes: userId}}, {new:true})
+  .orFail(() => ({name: "DocumentNotFoundError"}))
+  .then((item) => res.status(OK).send({data:item}))
   .catch((e) => {
-    if (e.name === "ValidationError") {
+    if (e.name === "DocumentNotFoundError") {
+      res.status(NOT_FOUND).send({message: "Item not found"})
+    } else if (e.name === "ValidationError") {
       res.status(BAD_REQUEST).send({message: "Validation error"});
     } else {
       res.status(SERVER_ERROR).send({message: "Error fro likeItem"})
@@ -73,9 +86,13 @@ const unlikeItem = (req, res) => {
   const {_id: userId} = req.user;
   const {itemId} = req.params;
 
-  ClothingItem.findByIdAndUpdate(itemId, {$pull: {likes: userId}}, {new: true}).then((item) => res.status(OK).send({data: item}))
+  ClothingItem.findByIdAndUpdate(itemId, {$pull: {likes: userId}}, {new: true})
+  .orFail(() => ({name: "DocumentNotFoundError"}))
+  .then((item) => res.status(OK).send({data: item}))
   .catch((e) => {
-    if (e.name === "ValidationError") {
+    if (e.name === "DocumentNotFoundError") {
+      res.status(NOT_FOUND).send({message: "Item not found"})
+    } else if (e.name === "ValidationError") {
       res.status(BAD_REQUEST).send({message: "Validation error"});
     } else {
       res.status(SERVER_ERROR).send({message: "Error from unlikeItem"})
