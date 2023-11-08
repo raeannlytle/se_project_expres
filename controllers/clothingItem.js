@@ -41,7 +41,9 @@ const updateItem = (req, res) => {
     if (e.name === "DocumentNotFoundError") {
       res.status(NOT_FOUND).send({message: "Item not found"})
     } else if (e.name === "ValidationError") {
-      res.status(BAD_REQUEST).send({message: "Validation error"});
+      res.status(BAD_REQUEST).send({message: "Validation error"})
+    } else if (e.name === "CastError") {
+      res.status(BAD_REQUEST).send({message: "Invalid ID format"})
     } else {
       res.status(SERVER_ERROR).send({message: "Error from updateItem"})
     }
@@ -58,6 +60,8 @@ const deleteItem = (req, res) => {
       res.status(NOT_FOUND).send({message: "Item not found"})
     } else if (e.name === "ValidationError") {
       res.status(BAD_REQUEST).send({message: "Validation error"});
+    } else if (e.name === "CastError") {
+      res.status(BAD_REQUEST).send({message: "Invalid ID format"})
     } else {
       res.status(SERVER_ERROR).send({message: "Error from deleteItem"})
     }
@@ -75,7 +79,9 @@ const likeItem = (req, res) => {
     if (e.name === "DocumentNotFoundError") {
       res.status(NOT_FOUND).send({message: "Item not found"})
     } else if (e.name === "ValidationError") {
-      res.status(BAD_REQUEST).send({message: "Validation error"});
+      res.status(BAD_REQUEST).send({message: "Validation error"})
+    } else if (e.name === "CastError") {
+        res.status(BAD_REQUEST).send({message: "Invalid ID format"})
     } else {
       res.status(SERVER_ERROR).send({message: "Error fro likeItem"})
     }
@@ -93,7 +99,9 @@ const unlikeItem = (req, res) => {
     if (e.name === "DocumentNotFoundError") {
       res.status(NOT_FOUND).send({message: "Item not found"})
     } else if (e.name === "ValidationError") {
-      res.status(BAD_REQUEST).send({message: "Validation error"});
+      res.status(BAD_REQUEST).send({message: "Validation error"})
+    } else if (e.name === "CastError") {
+      res.status(BAD_REQUEST).send({message: "Invalid ID format"})
     } else {
       res.status(SERVER_ERROR).send({message: "Error from unlikeItem"})
     }
