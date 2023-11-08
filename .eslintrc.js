@@ -10,6 +10,6 @@ module.exports = {
     ecmaVersion: "latest",
   },
   rules: {
-    camelcase: ["error", { properties: "never", ignoreDestructuring: true, allow: ["_id"] }],
-  },
+    "no-underscore-dangle": ["error", { "allow": ["_id"]}]
+  }
 };
