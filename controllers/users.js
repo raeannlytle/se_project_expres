@@ -49,6 +49,7 @@ const createUser = (req, res) => {
       res.status(SERVER_ERROR).send({message: "Error from createUser"});
     }
   });
+  return null;
 }
 
 module.exports = {
