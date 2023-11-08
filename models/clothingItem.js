@@ -37,8 +37,4 @@ const clothingItem = new mongoose.Schema({
   }
 });
 
-const user = new mongoose.Schema({
-
-})
-
 module.exports = mongoose.model('clothingItems', clothingItem);

@@ -22,6 +22,21 @@ const getItems = (req, res) => {
     .catch(() => res.status(SERVER_ERROR).send({ message: "Error from getItems" }));
 };
 
+const getUser = (req, res) => {
+  const userId = req.user._id;
+
+  // Assuming there's a User model, replace 'User' with the actual User model
+  User.findById(userId)
+    .then((user) => {
+      if (!user) {
+        res.status(NOT_FOUND).send({ message: "User not found" });
+      } else {
+        res.status(200).send({ data: user });
+      }
+    })
+    .catch(() => res.status(SERVER_ERROR).send({ message: "Error from getUser" }));
+};
+
 
 const deleteItem = (req, res) => {
   const {itemId} = req.params;
@@ -85,8 +100,8 @@ const unlikeItem = (req, res) => {
 module.exports = {
   createItem,
   getItems,
-  updateItem,
   deleteItem,
   likeItem,
-  unlikeItem
+  unlikeItem,
+  getUser,
 }
