@@ -3,8 +3,9 @@ const ClothingItem = require('../models/clothingItem');
 
 const createItem = (req, res) => {
   const {name, weather, imageUrl} = req.body;
+  const owner = req.user._id;
 
-  ClothingItem.create({name, weather, imageUrl}).then((item) => {
+  ClothingItem.create({name, weather, imageUrl, owner}).then((item) => {
     res.send({data:item})
   }).catch((e) => {
     if (e.name === "ValidationError") {
