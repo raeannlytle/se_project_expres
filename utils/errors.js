@@ -18,3 +18,9 @@ if (e.name === 'ServerError') {
   console.error('ServerError Error:', e);
   return res.status(SERVER_ERROR).send({message: "Server not found"});
 }
+
+module.exports = {
+  BAD_REQUEST,
+  NOT_FOUND,
+  SERVER_ERROR
+}
