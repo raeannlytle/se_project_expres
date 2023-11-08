@@ -1,3 +1,4 @@
+const { response } = require('express');
 const ClothingItem = require('../models/clothingItem');
 
 const OK = 200;
@@ -21,7 +22,11 @@ const createItem = (req, res) => {
 const getItems = (req, res) => {
   ClothingItem.find({}).then((items) => res.status(OK).send(items))
   .catch((e) => {
-    res.status(SERVER_ERROR).send({message: 'Error from getItems', e})
+    if (e.name === "ValidationError") {
+      res.status(BAD_REQUEST).send({message: "Validation error"});
+    } else {
+      res.status(SERVER_ERROR).send({message: "Error from getItems"})
+    }
   })
 };
 
@@ -30,7 +35,11 @@ const updateItem = (req, res) => {
   const {imageURL} = req.body;
   ClothingItem.findByIdAndUpdate(itemId, {$set: {imageURL}}).orFail().then((item) => res.status(OK).send({data: item}))
   .catch((e) => {
-    res.status(SERVER_ERROR).send({message: 'Error from updateItem', e})
+    if (e.name === "ValidationError") {
+      res.status(BAD_REQUEST).send({message: "Validation error"});
+    } else {
+      res.status(SERVER_ERROR).send({message: "Error from updateItem"})
+    }
   })
 };
 
@@ -38,7 +47,11 @@ const deleteItem = (req, res) => {
   const {itemId} = req.params;
   ClothingItem.findByIdAndDelete(itemId).orFail().then((item) => res.status(OK).send({}))
   .catch((e) => {
-    res.status(SERVER_ERROR).send({message: 'Error from deleteItem', e})
+    if (e.name === "ValidationError") {
+      res.status(BAD_REQUEST).send({message: "Validation error"});
+    } else {
+      res.status(SERVER_ERROR).send({message: "Error from deleteItem"})
+    }
   })
 }
 
@@ -47,7 +60,12 @@ const likeItem = (req, res) => {
   const {itemId} = req.params;
 
   ClothingItem.findByIdAndUpdate(itemId, {$addToSet: {likes: userId}}, {new:true}).then((item) => res.status(OK).send({data:item}))
-  .catch((e) => {res.status(SERVER_ERROR).send({message: 'Error from likeItem', e});
+  .catch((e) => {
+    if (e.name === "ValidationError") {
+      res.status(BAD_REQUEST).send({message: "Validation error"});
+    } else {
+      res.status(SERVER_ERROR).send({message: "Error fro likeItem"})
+    }
 });
 };
 
@@ -56,7 +74,12 @@ const unlikeItem = (req, res) => {
   const {itemId} = req.params;
 
   ClothingItem.findByIdAndUpdate(itemId, {$pull: {likes: userId}}, {new: true}).then((item) => res.status(OK).send({data: item}))
-  .catch((e) => {res.status(SERVER_ERROR).send({message: 'Error from unlikeItem', e});
+  .catch((e) => {
+    if (e.name === "ValidationError") {
+      res.status(BAD_REQUEST).send({message: "Validation error"});
+    } else {
+      res.status(SERVER_ERROR).send({message: "Error from unlikeItem"})
+    }
 });
 }
 
