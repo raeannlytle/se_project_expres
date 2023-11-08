@@ -11,7 +11,7 @@ const user = new mongoose.Schema({
     type: String,
     required: true,
     validate: {
-      validator: (value) => validator.isURL(value),
+      validator: (v) => validator.isURL(v),
       message: "Invalid URL for avatar"
     }
   }
