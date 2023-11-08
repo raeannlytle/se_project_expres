@@ -2,7 +2,7 @@ const User = require('../models/user');
 const {BAD_REQUEST, SERVER_ERROR, NOT_FOUND} = require('../utils/errors');
 
 const getUser = (req, res) => {
-  const userId = req.user._id;
+  const {userId} = req.params;
 
   User.findById(userId)
     .then((user) => {
