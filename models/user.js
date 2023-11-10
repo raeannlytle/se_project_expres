@@ -14,6 +14,19 @@ const user = new mongoose.Schema({
       validator: (v) => validator.isURL(v),
       message: "Invalid URL for avatar"
     }
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+    validate: {
+      validator: (v) => validator.isEmail(v),
+      message: "Invalid email format",
+    }
+  },
+  password: {
+    type: String,
+    required: true,
   }
 })
 
