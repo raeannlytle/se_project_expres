@@ -32,7 +32,7 @@ const getUsers = (req, res) => {
   .catch(() => res.status(SERVER_ERROR).send({message: "Error from getUsers"}))
 }
 
-const createUser = (req, res) => {
+const createUser = async (req, res) => {
   const {name, avatar} = req.body;
 
   if (!name || !avatar || !email || !password) {
@@ -62,24 +62,24 @@ const createUser = (req, res) => {
 };
 
 const login = async (req, res) => {
-  const {email, password} = req.body;
+  const { email, password } = req.body;
 
   try {
-    const user = await User.findUserbyCredentials(email, password);
+    const user = await User.findUserByCredentials(email, password);
 
     if (!user) {
-      return res.status(UNAUTHORIZED).send({message: "Invalid email or password"});
+      return res.status(UNAUTHORIZED).send({ message: "Invalid email or password" });
     }
 
-    const token = jwt.sign({_id: user._id}, JWT_SECRET, {
+    const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
       expiresIn: '7d',
     });
 
-    res.status(200).send({token})
-  } catch(e) {
-    res.status(SERVER_ERROR).send({message: "Error from login controller"});
+    res.status(200).send({ token });
+  } catch (e) {
+    res.status(SERVER_ERROR).send({ message: "Error from login controller" });
   }
-}
+};
 
 module.exports = {
   getUser,
