@@ -1,5 +1,6 @@
 const BAD_REQUEST = 400;
 const UNAUTHORIZED = 401;
+const FORBIDDEN = 403;
 const NOT_FOUND = 404;
 const SERVER_ERROR = 500;
 
@@ -12,6 +13,11 @@ const handleErrorResponse = (res, e) => {
   if (e.name === "Unauthorized") {
     console.error('Unauthorized Error:');
     return res.status(UNAUTHORIZED).send({message: "Unauthorized access"});
+  }
+
+  if (e.name === "Forbidden") {
+    console.error("Forbidden Error: ");
+    return res.status(FORBIDDEN).send({message: 'Action is forbidden'});
   }
 
   if (e.name === 'NotFound') {
@@ -31,6 +37,7 @@ const handleErrorResponse = (res, e) => {
 
 module.exports = {
   BAD_REQUEST,
+  FORBIDDEN,
   NOT_FOUND,
   SERVER_ERROR,
   UNAUTHORIZED,

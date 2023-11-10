@@ -1,4 +1,4 @@
-const { BAD_REQUEST, NOT_FOUND, SERVER_ERROR } = require("../utils/errors");
+const { BAD_REQUEST, FORBIDDEN, NOT_FOUND, SERVER_ERROR } = require("../utils/errors");
 const ClothingItem = require('../models/clothingItem');
 
 const createItem = (req, res) => {
@@ -22,24 +22,33 @@ const getItems = (req, res) => {
     .catch(() => res.status(SERVER_ERROR).send({ message: "Error from getItems" }));
 };
 
-
 const deleteItem = (req, res) => {
-  const {itemId} = req.params;
-  ClothingItem.findByIdAndDelete(itemId)
-  .orFail()
-  .then(() => res.status(200).send({message: "Item successfully deleted"}))
-  .catch((e) => {
-    if (e.name === "DocumentNotFoundError") {
-      res.status(NOT_FOUND).send({message: "Item not found"})
-    } else if (e.name === "ValidationError") {
-      res.status(BAD_REQUEST).send({message: "Validation error"});
-    } else if (e.name === "CastError") {
-      res.status(BAD_REQUEST).send({message: "Invalid ID format"})
-    } else {
-      res.status(SERVER_ERROR).send({message: "Error from deleteItem"})
-    }
-  })
-}
+  const { itemId } = req.params;
+  const userId = req.user._id;
+
+  ClothingItem.findById(itemId)
+    .orFail()
+    .then((clothingItem) => {
+      if (clothingItem.owner.toString() !== userId) {
+        return res.status(FORBIDDEN).send({ message: "You do not have permission to delete this item" });
+      }
+
+      return ClothingItem.findByIdAndDelete(itemId);
+    })
+    .then(() => res.status(200).send({ message: "Item successfully deleted" }))
+    .catch((e) => {
+      if (e.name === "DocumentNotFoundError") {
+        res.status(NOT_FOUND).send({ message: "Item not found" });
+      } else if (e.name === "ValidationError") {
+        res.status(BAD_REQUEST).send({ message: "Validation error" });
+      } else if (e.name === "CastError") {
+        res.status(BAD_REQUEST).send({ message: "Invalid ID format" });
+      } else {
+        res.status(SERVER_ERROR).send({ message: "Error from deleteItem" });
+      }
+    });
+};
+
 
 const likeItem = (req, res) => {
   const {_id: userId} = req.user;
