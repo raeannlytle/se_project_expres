@@ -2,19 +2,26 @@ const { BAD_REQUEST, FORBIDDEN, NOT_FOUND, SERVER_ERROR } = require("../utils/er
 const ClothingItem = require('../models/clothingItem');
 
 const createItem = (req, res) => {
-  const {name, weather, imageUrl} = req.body;
-  const owner = req.user._id;
+  const { name, weather, imageUrl } = req.body;
+  const owner = req.user && req.user._id;
 
-  ClothingItem.create({name, weather, imageUrl, owner}).then((item) => {
-    res.send({data:item})
-  }).catch((e) => {
-    if (e.name === "ValidationError") {
-      res.status(BAD_REQUEST).send({message: "Validation error"});
-    } else {
-      res.status(SERVER_ERROR).send({message: "Error from createItem"})
-    }
-  })
+  if (!owner) {
+    return res.status(FORBIDDEN).send({ message: "User not authenticated or missing user ID" });
+  }
+
+  ClothingItem.create({ name, weather, imageUrl, owner })
+    .then((item) => {
+      res.send({ data: item });
+    })
+    .catch((e) => {
+      if (e.name === "ValidationError") {
+        res.status(BAD_REQUEST).send({ message: "Validation error" });
+      } else {
+        res.status(SERVER_ERROR).send({ message: "Error from createItem" });
+      }
+    });
 };
+
 
 const getItems = (req, res) => {
   ClothingItem.find({})
@@ -24,6 +31,11 @@ const getItems = (req, res) => {
 
 const deleteItem = (req, res) => {
   const { itemId } = req.params;
+
+  if (!req.user || !req.user._id) {
+    return res.status(FORBIDDEN).send({ message: "User not authenticated or missing user ID" });
+  }
+
   const userId = req.user._id;
 
   ClothingItem.findById(itemId)
@@ -51,7 +63,7 @@ const deleteItem = (req, res) => {
 
 
 const likeItem = (req, res) => {
-  const {_id: userId} = req.user;
+  const {_id: userId} = req.user || {};
   const {itemId} = req.params;
 
   ClothingItem.findByIdAndUpdate(itemId, {$addToSet: {likes: userId}}, {new:true})
@@ -65,13 +77,13 @@ const likeItem = (req, res) => {
     } else if (e.name === "CastError") {
         res.status(BAD_REQUEST).send({message: "Invalid ID format"})
     } else {
-      res.status(SERVER_ERROR).send({message: "Error fro likeItem"})
+      res.status(SERVER_ERROR).send({message: "Error from likeItem"})
     }
 });
 };
 
 const unlikeItem = (req, res) => {
-  const {_id: userId} = req.user;
+  const {_id: userId} = req.user || {};
   const {itemId} = req.params;
 
   ClothingItem.findByIdAndUpdate(itemId, {$pull: {likes: userId}}, {new: true})
