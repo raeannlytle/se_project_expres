@@ -1,4 +1,5 @@
 const BAD_REQUEST = 400;
+const UNAUTHORIZED = 401;
 const NOT_FOUND = 404;
 const SERVER_ERROR = 500;
 
@@ -6,6 +7,11 @@ const handleErrorResponse = (res, e) => {
   if (e.name === 'InvalidData') {
     console.error('InvalidData Error:');
     return res.status(BAD_REQUEST).send({ message: 'Data is invalid' });
+  }
+
+  if (e.name === "Unauthorized") {
+    console.error('Unauthorized Error:');
+    return res.status(UNAUTHORIZED).send({message: "Unauthorized access"});
   }
 
   if (e.name === 'NotFound') {
@@ -27,5 +33,6 @@ module.exports = {
   BAD_REQUEST,
   NOT_FOUND,
   SERVER_ERROR,
+  UNAUTHORIZED,
   handleErrorResponse,
 };
