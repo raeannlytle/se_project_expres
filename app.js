@@ -12,14 +12,6 @@ mongoose.connect('mongodb://127.0.0.1:27017/wtwr_db', (e) => {
   }
 });
 
-app.use((req, res, next) => {
-  req.user = {
-    _id: '65491b3290b7482b56d92e12'
-  };
-  next();
-});
-
-
 app.use(express.json());
 
 app.post('/signin', login);
