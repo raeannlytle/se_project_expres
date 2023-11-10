@@ -101,10 +101,38 @@ const getCurrentUser = (req, res) => {
   });
 }
 
+const updateUserProfile = async (req, res) => {
+  const {name, avatar} = req.body;
+  const loggedInUserId = req.user._id;
+
+  try {
+    const updatedUser = await User.findByIdAndUpdate(
+      loggedInUserId,
+      {name, avatar},
+      {new: true, runValidators: true}
+    );
+
+    if (!updatedUser) {
+      return res.status(NOT_FOUND).send({message: "User not found"});
+    }
+
+    res.status(200).send({data: updatedUser});
+  } catch(e) {
+    if(e.name === "ValidationError") {
+      res.status(BAD_REQUEST).send({message: "Validation error"});
+    } else if (e.name === "CastError") {
+      res.status(BAD_REQUEST).send({message: "Invalid ID format"});
+    } else {
+      res.status(SERVER_ERROR).send({message: "Error from updateUserProfile"});
+    }
+  }
+}
+
 module.exports = {
   getUser,
   getUsers,
   createUser,
   login,
   getCurrentUser,
+  updateUserProfile
 }
