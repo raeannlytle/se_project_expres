@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const cors = require('cors');
 const routes = require('./routes');
 const {login, createUser} = require('./controllers/users');
 
@@ -12,6 +13,7 @@ mongoose.connect('mongodb://127.0.0.1:27017/wtwr_db', (e) => {
   }
 });
 
+app.use(cors());
 app.use(express.json());
 
 app.post('/signin', login);
