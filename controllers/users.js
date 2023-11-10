@@ -33,7 +33,7 @@ const getUsers = (req, res) => {
 }
 
 const createUser = async (req, res) => {
-  const {name, avatar} = req.body;
+  const {name, avatar, email, password} = req.body;
 
   if (!name || !avatar || !email || !password) {
     return res.status(BAD_REQUEST).send({message: "All fields are required"})
