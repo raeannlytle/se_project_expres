@@ -81,9 +81,30 @@ const login = async (req, res) => {
   }
 };
 
+const getCurrentUser = (req, res) => {
+  const loggedInUserId = req.user._id;
+
+  User.findById(loggedInUserId)
+  .then((user) => {
+    if (!user) {
+      res.status(NOT_FOUND).send({message: "User not found"});
+    } else {
+      res.status(200).send({data: user});
+    }
+  })
+  .catch((e) => {
+    if (e.name === "CastError") {
+      res.status(BAD_REQUEST).send({message: "Invalid ID format"});
+    } else {
+      res.status(SERVER_ERROR).send({message: "Error from getCurrentUser"});
+    }
+  });
+}
+
 module.exports = {
   getUser,
   getUsers,
   createUser,
-  login
+  login,
+  getCurrentUser,
 }
