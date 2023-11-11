@@ -37,9 +37,9 @@ const deleteItem = (req, res) => {
         return res.status(FORBIDDEN).send({ message: "You do not have permission to delete this item" });
       }
 
-      return ClothingItem.findByIdAndDelete(itemId);
+      return ClothingItem.findByIdAndDelete(itemId)
+      .then(() => res.status(200).send({ message: "Item successfully deleted" }))
     })
-    .then(() => res.status(200).send({ message: "Item successfully deleted" }))
     .catch((e) => {
       if (e.name === "DocumentNotFoundError") {
         res.status(NOT_FOUND).send({ message: "Item not found" });
