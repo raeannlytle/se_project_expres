@@ -62,8 +62,6 @@ const likeItem = (req, res) => {
   .catch((e) => {
     if (e.name === "DocumentNotFoundError") {
       res.status(NOT_FOUND).send({message: "Item not found"})
-    } else if (e.name === "ValidationError") {
-      res.status(BAD_REQUEST).send({message: "Validation error"})
     } else if (e.name === "CastError") {
         res.status(BAD_REQUEST).send({message: "Invalid ID format"})
     } else {
