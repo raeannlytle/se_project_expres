@@ -29,6 +29,22 @@ const user = new mongoose.Schema({
     required: true,
     select: false,
   }
-})
+});
+
+userSchema.statistics.findUserByCredentials = async function (email, password) {
+  const user = await this.findOne({email});
+
+  if (!user) {
+    throw new Error('Invalid email or password');
+  }
+
+  const isPasswordMatch = await bcrypt.compare(password, user.password);
+
+  if (!isPasswordMatch) {
+    throw new Error('Invalid email or password');
+  }
+
+  return user;
+}
 
 module.exports = mongoose.model('User', user);
