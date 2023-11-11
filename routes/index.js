@@ -8,9 +8,6 @@ const { getCurrentUser, updateUserProfile } = require('../controllers/users');
 router.use('/items', clothingItem);
 router.use('/users', authMiddleware, user);
 
-router.get('/me', authMiddleware, getCurrentUser);
-router.patch('/me', authMiddleware, updateUserProfile);
-
 router.use((req, res) => {
   res.status(NOT_FOUND).send({message: "Route not found"})
 });
