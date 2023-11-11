@@ -28,7 +28,7 @@ const handleErrorResponse = (res, e) => {
 
   if (e.name === "Conflict") {
     console.error('Conflict Error: ');
-    return res.status(CONFLICT).send({message: ''})
+    return res.status(CONFLICT).send({message: 'Conflict with existing resource'})
   }
 
   if (e.name === 'ServerError') {
