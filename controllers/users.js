@@ -45,14 +45,17 @@ const login = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    const user = await User.findUserByCredentials(email, password);
+    const user = await User.findOne({email});
 
     if (!user) {
       return res.status(UNAUTHORIZED).send({ message: "Invalid email or password" });
     }
 
-    const userWithPassword = await User.findOne({email}).select('+password');
-    console.log("Password hash", userWithPassword.password);
+    const isPasswordMatch = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordMatch) {
+      return res.status(UNAUTHORIZED).send({message: 'Invalid email or password'})
+    }
 
     const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
       expiresIn: '7d',
