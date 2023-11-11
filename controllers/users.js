@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
-const {BAD_REQUEST, UNAUTHORIZED, SERVER_ERROR, NOT_FOUND} = require('../utils/errors');
+const {BAD_REQUEST, UNAUTHORIZED, CONFLICT, SERVER_ERROR, NOT_FOUND} = require('../utils/errors');
 const {JWT_SECRET} = require('../utils/config');
 
 const createUser = async (req, res) => {
@@ -14,7 +14,7 @@ const createUser = async (req, res) => {
   try {
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(BAD_REQUEST).send({ message: "Email is already in use" });
+      return res.status(CONFLICT).send({ message: "Email is already in use" });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);

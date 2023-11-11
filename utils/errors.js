@@ -2,6 +2,7 @@ const BAD_REQUEST = 400;
 const UNAUTHORIZED = 401;
 const FORBIDDEN = 403;
 const NOT_FOUND = 404;
+const CONFLICT = 409;
 const SERVER_ERROR = 500;
 
 const handleErrorResponse = (res, e) => {
@@ -25,6 +26,11 @@ const handleErrorResponse = (res, e) => {
     return res.status(NOT_FOUND).send({ message: 'Item not found' });
   }
 
+  if (e.name === "Conflict") {
+    console.error('Conflict Error: ');
+    return res.status(CONFLICT).send({message: ''})
+  }
+
   if (e.name === 'ServerError') {
     console.error('ServerError Error:');
     return res.status(SERVER_ERROR).send({ message: 'Server not found' });
@@ -39,6 +45,7 @@ module.exports = {
   BAD_REQUEST,
   FORBIDDEN,
   NOT_FOUND,
+  CONFLICT,
   SERVER_ERROR,
   UNAUTHORIZED,
   handleErrorResponse,
