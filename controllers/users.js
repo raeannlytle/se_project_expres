@@ -4,26 +4,6 @@ const User = require('../models/user');
 const {BAD_REQUEST, UNAUTHORIZED, SERVER_ERROR, NOT_FOUND} = require('../utils/errors');
 const {JWT_SECRET} = require('../utils/config');
 
-const getUser = (req, res) => {
-  const {userId} = req.params;
-
-  User.findById(userId)
-    .then((user) => {
-      if (!user) {
-        res.status(NOT_FOUND).send({message: "User not found"});
-      } else {
-        res.status(200).send({ data: user });
-      }
-    })
-    .catch((e) => {
-      if (e.name === 'CastError') {
-        res.status(BAD_REQUEST).send({message: "Invalid ID format"});
-      } else {
-        res.status(SERVER_ERROR).send({message: "Error from getUser"});
-      }
-    });
-};
-
 const getUsers = (req, res) => {
   User.find({})
   .then((users) => {
@@ -132,7 +112,6 @@ const updateUserProfile = async (req, res) => {
 }
 
 module.exports = {
-  getUser,
   getUsers,
   createUser,
   login,
