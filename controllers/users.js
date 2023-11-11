@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const {BAD_REQUEST, UNAUTHORIZED, CONFLICT, SERVER_ERROR, NOT_FOUND} = require('../utils/errors');
 const {JWT_SECRET} = require('../utils/config');
+const { unsubscribe } = require('../routes');
 
 const createUser = async (req, res) => {
   const {name, avatar, email, password} = req.body;
@@ -23,7 +24,14 @@ const createUser = async (req, res) => {
 
     const savedUser = await newUser.save();
 
-    res.status(200).send({ data: savedUser });
+    const userResponse = {
+      _id: savedUser._id,
+      name: savedUser.name,
+      avatar: savedUser.avatar,
+      email: savedUser.email,
+    }
+
+    res.status(200).send({ data: userResponse });
   } catch (error) {
     if (error.name === 'ValidationError') {
       res.status(BAD_REQUEST).send({ message: "Validation error" });
