@@ -5,10 +5,6 @@ const createItem = (req, res) => {
   const { name, weather, imageUrl } = req.body;
   const owner = req.user && req.user._id;
 
-  if (!owner) {
-    return res.status(FORBIDDEN).send({ message: "User not authenticated or missing user ID" });
-  }
-
   ClothingItem.create({ name, weather, imageUrl, owner })
     .then((item) => {
       res.send({ data: item });
