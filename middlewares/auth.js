@@ -3,7 +3,7 @@ const {JWT_SECRET} = require('../utils/config');
 const { UNAUTHORIZED } = require('../utils/errors');
 
 const authMiddleware = (req, res, next) => {
-  const authorization = req.headers.authorization;
+  const authorization = req.headers;
 
   if (!authorization || !authorization.startsWith('Bearer ')) {
     return res.status(UNAUTHORIZED).send({message: 'Unauthorized'})
