@@ -4,14 +4,6 @@ const User = require('../models/user');
 const {BAD_REQUEST, UNAUTHORIZED, SERVER_ERROR, NOT_FOUND} = require('../utils/errors');
 const {JWT_SECRET} = require('../utils/config');
 
-const getUsers = (req, res) => {
-  User.find({})
-  .then((users) => {
-    res.status(200).send({data: users});
-  })
-  .catch(() => res.status(SERVER_ERROR).send({message: "Error from getUsers"}))
-}
-
 const createUser = async (req, res) => {
   const {name, avatar, email, password} = req.body;
 
@@ -112,7 +104,6 @@ const updateUserProfile = async (req, res) => {
 }
 
 module.exports = {
-  getUsers,
   createUser,
   login,
   getCurrentUser,
