@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
 
-const user = new mongoose.Schema({
+const userSchema = new mongoose.Schema({
   name: {
     type: String,
     minLength: 2,
@@ -31,7 +31,7 @@ const user = new mongoose.Schema({
   }
 });
 
-userSchema.statistics.findUserByCredentials = async function (email, password) {
+userSchema.statics.findUserByCredentials = async function (email, password) {
   const user = await this.findOne({email});
 
   if (!user) {
@@ -47,4 +47,4 @@ userSchema.statistics.findUserByCredentials = async function (email, password) {
   return user;
 }
 
-module.exports = mongoose.model('User', user);
+module.exports = mongoose.model('User', userSchema);
