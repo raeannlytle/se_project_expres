@@ -28,10 +28,6 @@ const getItems = (req, res) => {
 const deleteItem = (req, res) => {
   const { itemId } = req.params;
 
-  if (!req.user || !req.user._id) {
-    return res.status(FORBIDDEN).send({ message: "User not authenticated or missing user ID" });
-  }
-
   const userId = req.user._id;
 
   ClothingItem.findById(itemId)
