@@ -30,13 +30,12 @@ const createUser = async (req, res) => {
       email: savedUser.email,
     };
 
-    res.status(200).send({ data: userResponse });
+    return res.status(200).send({ data: userResponse });
   } catch (error) {
     if (error.name === 'ValidationError') {
       return res.status(BAD_REQUEST).send({ message: "Validation error" });
-    } else {
-      return res.status(SERVER_ERROR).send({ message: "Error from createUser" });
     }
+    return res.status(SERVER_ERROR).send({ message: "Error from createUser" });
   }
 };
 
@@ -60,7 +59,7 @@ const login = async (req, res) => {
       expiresIn: '7d',
     });
 
-    res.status(200).send({ token });
+    return res.status(200).send({ token });
   } catch (e) {
     return res.status(SERVER_ERROR).send({ message: "Error from login controller" });
   }
@@ -69,20 +68,18 @@ const login = async (req, res) => {
 const getCurrentUser = (req, res) => {
   const loggedInUserId = req.user._id;
 
-  User.findById(loggedInUserId)
+  return User.findById(loggedInUserId)
     .then((user) => {
       if (!user) {
         return res.status(NOT_FOUND).send({ message: "User not found" });
-      } else {
-        return res.status(200).send({ data: user });
       }
+      return res.status(200).send({ data: user });
     })
     .catch((e) => {
       if (e.name === "CastError") {
         return res.status(BAD_REQUEST).send({ message: "Invalid ID format" });
-      } else {
-        return res.status(SERVER_ERROR).send({ message: "Error from getCurrentUser" });
       }
+      return res.status(SERVER_ERROR).send({ message: "Error from getCurrentUser" });
     });
 };
 
@@ -101,15 +98,15 @@ const updateUserProfile = async (req, res) => {
       return res.status(NOT_FOUND).send({ message: "User not found" });
     }
 
-    res.status(200).send({ data: updatedUser });
+    return res.status(200).send({ data: updatedUser });
   } catch (e) {
     if (e.name === "ValidationError") {
       return res.status(BAD_REQUEST).send({ message: "Validation error" });
-    } else if (e.name === "CastError") {
-      return res.status(BAD_REQUEST).send({ message: "Invalid ID format" });
-    } else {
-      return res.status(SERVER_ERROR).send({ message: "Error from updateUserProfile" });
     }
+    if (e.name === "CastError") {
+      return res.status(BAD_REQUEST).send({ message: "Invalid ID format" });
+    }
+    return res.status(SERVER_ERROR).send({ message: "Error from updateUserProfile" });
   }
 };
 
@@ -119,3 +116,4 @@ module.exports = {
   getCurrentUser,
   updateUserProfile
 };
+
