@@ -20,6 +20,8 @@ const authMiddleware = (req, res, next) => {
   } catch(e) {
     res.status(UNAUTHORIZED).send({message: "Unauthorized"});
   }
+
+  return null;
 };
 
 module.exports = authMiddleware;
