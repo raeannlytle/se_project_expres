@@ -3,7 +3,7 @@ const { JWT_SECRET } = require('../utils/config');
 const { UNAUTHORIZED } = require('../utils/errors');
 
 const authMiddleware = (req, res, next) => {
-  const authorizationHeader = req.headers['authorization'];
+  const authorizationHeader = req.headers.authorization;
 
   if (!authorizationHeader || !authorizationHeader.startsWith('Bearer ')) {
     return res.status(UNAUTHORIZED).send({ message: 'Unauthorized' });
