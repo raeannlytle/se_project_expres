@@ -4,7 +4,7 @@ const user = require("./users");
 const authMiddleware = require("../middlewares/auth");
 const { NOT_FOUND } = require("../utils/errors");
 
-router.use("/items", authMiddleware, clothingItem);
+router.use("/items", clothingItem);
 router.use("/users", authMiddleware, user);
 
 router.use((req, res) => {
