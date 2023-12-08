@@ -1,20 +1,26 @@
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const User = require('../models/user');
-const { BAD_REQUEST, UNAUTHORIZED, CONFLICT, SERVER_ERROR, NOT_FOUND } = require('../utils/errors');
-const { JWT_SECRET } = require('../utils/config');
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const User = require("../models/user");
+const {
+  BAD_REQUEST,
+  UNAUTHORIZED,
+  CONFLICT,
+  SERVER_ERROR,
+  NOT_FOUND,
+} = require("../utils/errors");
+const { JWT_SECRET } = require("../utils/config");
 
-const createUser = async (req, res) => {
+const createUser = async (req, res, next) => {
   const { name, avatar, email, password } = req.body;
 
   if (!name || !avatar || !email || !password) {
-    return res.status(BAD_REQUEST).send({ message: "All fields are required" });
+    return next({ status: BAD_REQUEST, message: "All fields are required" });
   }
 
   try {
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(CONFLICT).send({ message: "Email is already in use" });
+      return next({ status: CONFLICT, message: "Email is already in use" });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -30,60 +36,72 @@ const createUser = async (req, res) => {
       email: savedUser.email,
     };
 
-    return res.status(200).send({ data: userResponse });
+    res.status(200).send({ data: userResponse });
   } catch (error) {
-    if (error.name === 'ValidationError') {
-      return res.status(BAD_REQUEST).send({ message: "Validation error" });
+    if (error.name === "ValidationError") {
+      return next({ status: BAD_REQUEST, message: "Validation error" });
     }
-    return res.status(SERVER_ERROR).send({ message: "Error from createUser" });
+    return next({ status: SERVER_ERROR, message: "Error from createUser" });
   }
 };
 
-const login = async (req, res) => {
+const login = async (req, res, next) => {
   const { email, password } = req.body;
 
   try {
-    const user = await User.findOne({ email }).select('+password');
+    const user = await User.findOne({ email }).select("+password");
 
     if (!user) {
-      return res.status(UNAUTHORIZED).send({ message: "Invalid email or password" });
+      return next({
+        status: UNAUTHORIZED,
+        message: "Invalid email or password",
+      });
     }
 
     const isPasswordMatch = await bcrypt.compare(password, user.password);
 
     if (!isPasswordMatch) {
-      return res.status(UNAUTHORIZED).send({ message: 'Invalid email or password' });
+      return next({
+        status: UNAUTHORIZED,
+        message: "Invalid email or password",
+      });
     }
 
     const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
-      expiresIn: '7d',
+      expiresIn: "7d",
     });
 
-    return res.status(200).send({ token });
+    res.status(200).send({ token });
   } catch (e) {
-    return res.status(SERVER_ERROR).send({ message: "Error from login controller" });
+    return next({
+      status: SERVER_ERROR,
+      message: "Error from login controller",
+    });
   }
 };
 
-const getCurrentUser = (req, res) => {
+const getCurrentUser = (req, res, next) => {
   const loggedInUserId = req.user._id;
 
-  return User.findById(loggedInUserId)
+  User.findById(loggedInUserId)
     .then((user) => {
       if (!user) {
-        return res.status(NOT_FOUND).send({ message: "User not found" });
+        return next({ status: NOT_FOUND, message: "User not found" });
       }
-      return res.status(200).send({ data: user });
+      res.status(200).send({ data: user });
     })
     .catch((e) => {
       if (e.name === "CastError") {
-        return res.status(BAD_REQUEST).send({ message: "Invalid ID format" });
+        return next({ status: BAD_REQUEST, message: "Invalid ID format" });
       }
-      return res.status(SERVER_ERROR).send({ message: "Error from getCurrentUser" });
+      return next({
+        status: SERVER_ERROR,
+        message: "Error from getCurrentUser",
+      });
     });
 };
 
-const updateUserProfile = async (req, res) => {
+const updateUserProfile = async (req, res, next) => {
   const { name, avatar } = req.body;
   const loggedInUserId = req.user._id;
 
@@ -91,22 +109,25 @@ const updateUserProfile = async (req, res) => {
     const updatedUser = await User.findByIdAndUpdate(
       loggedInUserId,
       { name, avatar },
-      { new: true, runValidators: true }
+      { new: true, runValidators: true },
     );
 
     if (!updatedUser) {
-      return res.status(NOT_FOUND).send({ message: "User not found" });
+      return next({ status: NOT_FOUND, message: "User not found" });
     }
 
-    return res.status(200).send({ data: updatedUser });
+    res.status(200).send({ data: updatedUser });
   } catch (e) {
     if (e.name === "ValidationError") {
-      return res.status(BAD_REQUEST).send({ message: "Validation error" });
+      return next({ status: BAD_REQUEST, message: "Validation error" });
     }
     if (e.name === "CastError") {
-      return res.status(BAD_REQUEST).send({ message: "Invalid ID format" });
+      return next({ status: BAD_REQUEST, message: "Invalid ID format" });
     }
-    return res.status(SERVER_ERROR).send({ message: "Error from updateUserProfile" });
+    return next({
+      status: SERVER_ERROR,
+      message: "Error from updateUserProfile",
+    });
   }
 };
 
@@ -114,6 +135,5 @@ module.exports = {
   createUser,
   login,
   getCurrentUser,
-  updateUserProfile
+  updateUserProfile,
 };
-
