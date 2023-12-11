@@ -2,25 +2,25 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 const {
-  BAD_REQUEST,
-  UNAUTHORIZED,
-  CONFLICT,
-  SERVER_ERROR,
-  NOT_FOUND,
-} = require("../utils/errors");
+  BadRequestError,
+  UnauthorizedError,
+  ConflictError,
+  NotFoundError,
+} = require("../middlewares/custom-errors");
+const { SERVER_ERROR } = require("../utils/errors");
 const { JWT_SECRET } = require("../utils/config");
 
 const createUser = async (req, res, next) => {
   const { name, avatar, email, password } = req.body;
 
   if (!name || !avatar || !email || !password) {
-    return next({ status: BAD_REQUEST, message: "All fields are required" });
+    return next(new BadRequestError("All fields are required"));
   }
 
   try {
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return next({ status: CONFLICT, message: "Email is already in use" });
+      return next(new ConflictError("Email is already in use"));
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -39,9 +39,9 @@ const createUser = async (req, res, next) => {
     res.status(200).send({ data: userResponse });
   } catch (error) {
     if (error.name === "ValidationError") {
-      return next({ status: BAD_REQUEST, message: "Validation error" });
+      return next(new BadRequestError("Validation error"));
     }
-    return next({ status: SERVER_ERROR, message: "Error from createUser" });
+    return next(new SERVER_ERROR("Error from createUser"));
   }
 };
 
@@ -52,19 +52,13 @@ const login = async (req, res, next) => {
     const user = await User.findOne({ email }).select("+password");
 
     if (!user) {
-      return next({
-        status: UNAUTHORIZED,
-        message: "Invalid email or password",
-      });
+      return next(new UnauthorizedError("Invalid email or password"));
     }
 
     const isPasswordMatch = await bcrypt.compare(password, user.password);
 
     if (!isPasswordMatch) {
-      return next({
-        status: UNAUTHORIZED,
-        message: "Invalid email or password",
-      });
+      return next(new UnauthorizedError("Invalid email or password"));
     }
 
     const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
@@ -73,10 +67,7 @@ const login = async (req, res, next) => {
 
     res.status(200).send({ token });
   } catch (e) {
-    return next({
-      status: SERVER_ERROR,
-      message: "Error from login controller",
-    });
+    return next(new SERVER_ERROR("Error from login controller"));
   }
 };
 
@@ -86,18 +77,15 @@ const getCurrentUser = (req, res, next) => {
   User.findById(loggedInUserId)
     .then((user) => {
       if (!user) {
-        return next({ status: NOT_FOUND, message: "User not found" });
+        return next(new NotFoundError("User not found"));
       }
       res.status(200).send({ data: user });
     })
     .catch((e) => {
       if (e.name === "CastError") {
-        return next({ status: BAD_REQUEST, message: "Invalid ID format" });
+        return next(new BadRequestError("Invalid ID format"));
       }
-      return next({
-        status: SERVER_ERROR,
-        message: "Error from getCurrentUser",
-      });
+      return next(new SERVER_ERROR("Error from getCurrentUser"));
     });
 };
 
@@ -113,21 +101,18 @@ const updateUserProfile = async (req, res, next) => {
     );
 
     if (!updatedUser) {
-      return next({ status: NOT_FOUND, message: "User not found" });
+      return next(new NotFoundError("User not found"));
     }
 
     res.status(200).send({ data: updatedUser });
   } catch (e) {
     if (e.name === "ValidationError") {
-      return next({ status: BAD_REQUEST, message: "Validation error" });
+      return next(new BadRequestError("Validation error"));
     }
     if (e.name === "CastError") {
-      return next({ status: BAD_REQUEST, message: "Invalid ID format" });
+      return next(new BadRequestError("Invalid ID format"));
     }
-    return next({
-      status: SERVER_ERROR,
-      message: "Error from updateUserProfile",
-    });
+    return next(new SERVER_ERROR("Error from updateUserProfile"));
   }
 };
 
