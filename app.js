@@ -5,7 +5,7 @@ const { errors } = require("celebrate");
 const routes = require("./routes");
 const { login, createUser } = require("./controllers/users");
 const errorHandler = require("./middlewares/error-handler");
-
+const { requestLogger, errorLogger } = require("./middlewares/logger");
 const app = express();
 const { PORT = 3001 } = process.env;
 
@@ -21,7 +21,10 @@ app.use(express.json());
 app.post("/signup", createUser);
 app.post("/signin", login);
 
+app.use(requestLogger);
 app.use(routes);
+
+app.use(errorLogger);
 
 app.use(errors());
 
