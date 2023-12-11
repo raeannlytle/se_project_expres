@@ -41,10 +41,20 @@ const validateIdParam = celebrate({
   },
 });
 
+const validateId = celebrate({
+  params: Joi.object()
+    .keys({
+      itemId: Joi.string().hex().length(24).required(),
+      userId: Joi.string().hex().length(24).required(),
+    })
+    .options({ allowUnknown: true }),
+});
+
 module.exports = {
   validateAddClothingItem,
   validateNewUser,
   validateUserLogin,
   validateIdParam,
   validateUrl,
+  validateId,
 };
