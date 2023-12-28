@@ -1,4 +1,4 @@
-require('dotenv').config()
+require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -18,6 +18,12 @@ mongoose.connect("mongodb://127.0.0.1:27017/wtwr_db", (e) => {
 
 app.use(cors());
 app.use(express.json());
+
+app.get("/crash-test", () => {
+  setTimeout(() => {
+    throw new Error("Server will crash now");
+  }, 0);
+});
 
 app.post("/signup", createUser);
 app.post("/signin", login);
