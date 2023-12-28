@@ -1,5 +1,5 @@
-const crypto = require('crypto');
+const { JWT_SECRET = "dev-secret-key" } = process.env;
 
 module.exports = {
-  JWT_SECRET: crypto.randomBytes(30).toString('hex'),
-}
+  JWT_SECRET,
+};
