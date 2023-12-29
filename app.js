@@ -44,10 +44,11 @@ const signinValidation = celebrate({
   }),
 });
 
+app.use(requestLogger);
+
 app.post("/signup", signupValidation, createUser);
 app.post("/signin", signinValidation, login);
 
-app.use(requestLogger);
 app.use(routes);
 
 app.use(errorLogger);
