@@ -9,6 +9,7 @@ const routes = require("./routes");
 const { login, createUser } = require("./controllers/users");
 const errorHandler = require("./middlewares/error-handler");
 const { requestLogger, errorLogger } = require("./middlewares/logger");
+const validator = require("validator");
 
 const app = express();
 const { PORT = 3001 } = process.env;
@@ -31,7 +32,14 @@ app.get("/crash-test", () => {
 const signupValidation = celebrate({
   body: Joi.object().keys({
     name: Joi.string().required(),
-    avatar: Joi.string().required(),
+    avatar: Joi.string()
+      .required()
+      .custom((value, helpers) => {
+        if (!validator.isURL(value)) {
+          return helpers.message("Invalid URL format");
+        }
+        return value;
+      }),
     email: Joi.string().email().required(),
     password: Joi.string().required(),
   }),

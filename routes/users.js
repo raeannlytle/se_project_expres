@@ -1,13 +1,19 @@
 const { celebrate, Joi, Segments } = require("celebrate");
 const router = require("express").Router();
 const authMiddleware = require("../middlewares/auth");
+const validator = require("validator");
 
 const { getCurrentUser, updateUserProfile } = require("../controllers/users");
 
 const updateUserProfileSchema = {
   [Segments.BODY]: {
     name: Joi.string(),
-    avatar: Joi.string().uri(),
+    avatar: Joi.string().custom((value, helpers) => {
+      if (!validator.isURL(value)) {
+        return helpers.message("Invalid URI format");
+      }
+      return value;
+    }),
   },
 };
 
