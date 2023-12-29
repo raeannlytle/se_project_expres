@@ -1,6 +1,9 @@
-const errors = require("../middlewares/custom-errors");
-
-const { BadRequestError, ForbiddenError, NotFoundError, ServerError } = errors;
+const {
+  BadRequestError,
+  NotFoundError,
+  ForbiddenError,
+  ServerError,
+} = require("../utils/errors");
 
 const ClothingItem = require("../models/clothingItem");
 
@@ -14,9 +17,9 @@ const createItem = (req, res) => {
     })
     .catch((e) => {
       if (e.name === "ValidationError") {
-        res.status(BadRequestError).send({ message: "Validation error" });
+        res.status(BadRequestError("Validation error")).send();
       } else {
-        res.status(ServerError).send({ message: "Error from createItem" });
+        res.status(ServerError("Error from createItem")).send();
       }
     });
 };
@@ -24,14 +27,11 @@ const createItem = (req, res) => {
 const getItems = (req, res) => {
   ClothingItem.find({})
     .then((items) => res.status(200).send(items))
-    .catch(() =>
-      res.status(ServerError).send({ message: "Error from getItems" }),
-    );
+    .catch(() => res.status(ServerError("Error from getItems")).send());
 };
 
 const deleteItem = (req, res) => {
   const { itemId } = req.params;
-
   const userId = req.user && req.user._id;
 
   ClothingItem.findById(itemId)
@@ -39,8 +39,10 @@ const deleteItem = (req, res) => {
     .then((clothingItem) => {
       if (clothingItem.owner.toString() !== userId) {
         return res
-          .status(ForbiddenError)
-          .send({ message: "You do not have permission to delete this item" });
+          .status(
+            ForbiddenError("You do not have permission to delete this item"),
+          )
+          .send();
       }
 
       return ClothingItem.findByIdAndDelete(itemId).then(() =>
@@ -49,11 +51,11 @@ const deleteItem = (req, res) => {
     })
     .catch((e) => {
       if (e.name === "DocumentNotFoundError") {
-        res.status(NotFoundError).send({ message: "Item not found" });
+        res.status(NotFoundError("Item not found")).send();
       } else if (e.name === "CastError") {
-        res.status(BadRequestError).send({ message: "Invalid ID format" });
+        res.status(BadRequestError("Invalid ID format")).send();
       } else {
-        res.status(ServerError).send({ message: "Error from deleteItem" });
+        res.status(ServerError("Error from deleteItem")).send();
       }
     });
 };
@@ -71,11 +73,11 @@ const likeItem = (req, res) => {
     .then((item) => res.status(200).send({ data: item }))
     .catch((e) => {
       if (e.name === "DocumentNotFoundError") {
-        res.status(NotFoundError).send({ message: "Item not found" });
+        res.status(NotFoundError("Item not found")).send();
       } else if (e.name === "CastError") {
-        res.status(BadRequestError).send({ message: "Invalid ID format" });
+        res.status(BadRequestError("Invalid ID format")).send();
       } else {
-        res.status(ServerError).send({ message: "Error from likeItem" });
+        res.status(ServerError("Error from likeItem")).send();
       }
     });
 };
@@ -93,11 +95,11 @@ const unlikeItem = (req, res) => {
     .then((item) => res.status(200).send({ data: item }))
     .catch((e) => {
       if (e.name === "DocumentNotFoundError") {
-        res.status(NotFoundError).send({ message: "Item not found" });
+        res.status(NotFoundError("Item not found")).send();
       } else if (e.name === "CastError") {
-        res.status(BadRequestError).send({ message: "Invalid ID format" });
+        res.status(BadRequestError("Invalid ID format")).send();
       } else {
-        res.status(ServerError).send({ message: "Error from unlikeItem" });
+        res.status(ServerError("Error from unlikeItem")).send();
       }
     });
 };
