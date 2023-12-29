@@ -76,7 +76,7 @@ const login = async (req, res, next) => {
 const getCurrentUser = (req, res, next) => {
   const loggedInUserId = req.user._id;
 
-  return User.findById(loggedInUserId)
+  User.findById(loggedInUserId)
     .then((user) => {
       if (!user) {
         return res.status(404).send({ error: "User not found" });
