@@ -4,6 +4,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const { errors } = require("celebrate");
+const { celebrate, Joi } = require("celebrate");
 const routes = require("./routes");
 const { login, createUser } = require("./controllers/users");
 const errorHandler = require("./middlewares/error-handler");
@@ -27,8 +28,24 @@ app.get("/crash-test", () => {
   }, 0);
 });
 
-app.post("/signup", createUser);
-app.post("/signin", login);
+const signupValidation = celebrate({
+  body: Joi.object().keys({
+    name: Joi.string().required(),
+    avatar: Joi.string().required(),
+    email: Joi.string().email().required(),
+    password: Joi.string().required(),
+  }),
+});
+
+const signinValidation = celebrate({
+  body: Joi.object().keys({
+    email: Joi.string().email().required(),
+    password: Joi.string().required(),
+  }),
+});
+
+app.post("/signup", signupValidation, createUser);
+app.post("/signin", signinValidation, login);
 
 app.use(requestLogger);
 app.use(routes);
