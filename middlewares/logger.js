@@ -3,11 +3,10 @@ const expressWinston = require("express-winston");
 
 const messageFormat = winston.format.combine(
   winston.format.timestamp(),
-  winston.format.printf(({ level, message, meta, timestamp }) => {
-    return `${timestamp} ${level}: ${message} ${
-      meta ? JSON.stringify(meta) : ""
-    }`;
-  }),
+  winston.format.printf(
+    ({ level, message, meta, timestamp }) =>
+      `${timestamp} ${level}: ${message} ${meta ? JSON.stringify(meta) : ""}`,
+  ),
 );
 
 const requestLogger = expressWinston.logger({

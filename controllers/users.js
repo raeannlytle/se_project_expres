@@ -1,13 +1,13 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
-const {
-  BadRequestError,
-  UnauthorizedError,
-  ConflictError,
-  NotFoundError,
-  ServerError,
-} = require("../utils/errors");
+
+const { BadRequestError } = require("../utils/errors/BadRequestError");
+const { UnauthorizedError } = require("../utils/errors/UnauthorizedError");
+const { ServerError } = require("../utils/errors/ServerError");
+const { NotFoundError } = require("../utils/errors/NotFoundError");
+const { ConflictError } = require("../utils/errors/ConflictError");
+
 const { JWT_SECRET } = require("../utils/config");
 
 const createUser = async (req, res, next) => {
@@ -37,6 +37,7 @@ const createUser = async (req, res, next) => {
     };
 
     res.status(200).send({ data: userResponse });
+    return null;
   } catch (error) {
     if (error.name === "ValidationError") {
       return next(new BadRequestError("Validation error"));
@@ -66,6 +67,7 @@ const login = async (req, res, next) => {
     });
 
     res.status(200).send({ token });
+    return null;
   } catch (e) {
     return next(new ServerError("Error from login controller"));
   }
@@ -77,7 +79,7 @@ const getCurrentUser = (req, res, next) => {
   User.findById(loggedInUserId)
     .then((user) => {
       if (!user) {
-        return next(new NotFoundError("User not found"));
+        return res.status(404).send({ error: "User not found" });
       }
       res.status(200).send({ data: user });
     })
@@ -105,6 +107,7 @@ const updateUserProfile = async (req, res, next) => {
     }
 
     res.status(200).send({ data: updatedUser });
+    return null;
   } catch (e) {
     if (e.name === "ValidationError") {
       return next(new BadRequestError("Validation error"));
