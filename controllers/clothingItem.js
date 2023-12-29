@@ -1,9 +1,7 @@
-const {
-  BadRequestError,
-  NotFoundError,
-  ForbiddenError,
-  ServerError,
-} = require("../utils/errors");
+const { BadRequestError } = require("../utils/errors/BadRequestError");
+const { ServerError } = require("../utils/errors/ServerError");
+const { ForbiddenError } = require("../utils/errors/ForbiddenError");
+const { NotFoundError } = require("../utils/errors/NotFoundError");
 
 const ClothingItem = require("../models/clothingItem");
 

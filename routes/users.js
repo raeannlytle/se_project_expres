@@ -1,7 +1,7 @@
 const { celebrate, Joi, Segments } = require("celebrate");
+const validator = require("validator");
 const router = require("express").Router();
 const authMiddleware = require("../middlewares/auth");
-const validator = require("validator");
 
 const { getCurrentUser, updateUserProfile } = require("../controllers/users");
 
