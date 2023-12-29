@@ -6,8 +6,8 @@ const {
   UnauthorizedError,
   ConflictError,
   NotFoundError,
-} = require("../middlewares/custom-errors");
-const { SERVER_ERROR } = require("../utils/errors");
+  ServerError,
+} = require("../utils/errors");
 const { JWT_SECRET } = require("../utils/config");
 
 const createUser = async (req, res, next) => {
@@ -41,7 +41,7 @@ const createUser = async (req, res, next) => {
     if (error.name === "ValidationError") {
       return next(new BadRequestError("Validation error"));
     }
-    return next(new SERVER_ERROR("Error from createUser"));
+    return next(new ServerError("Error from createUser"));
   }
 };
 
@@ -67,7 +67,7 @@ const login = async (req, res, next) => {
 
     res.status(200).send({ token });
   } catch (e) {
-    return next(new SERVER_ERROR("Error from login controller"));
+    return next(new ServerError("Error from login controller"));
   }
 };
 
@@ -85,7 +85,7 @@ const getCurrentUser = (req, res, next) => {
       if (e.name === "CastError") {
         return next(new BadRequestError("Invalid ID format"));
       }
-      return next(new SERVER_ERROR("Error from getCurrentUser"));
+      return next(new ServerError("Error from getCurrentUser"));
     });
 };
 
@@ -112,7 +112,7 @@ const updateUserProfile = async (req, res, next) => {
     if (e.name === "CastError") {
       return next(new BadRequestError("Invalid ID format"));
     }
-    return next(new SERVER_ERROR("Error from updateUserProfile"));
+    return next(new ServerError("Error from updateUserProfile"));
   }
 };
 
