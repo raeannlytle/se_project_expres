@@ -38,10 +38,19 @@ class ConflictError extends Error {
   }
 }
 
+class ServerError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = "ServerError";
+    this.status = 500;
+  }
+}
+
 module.exports = {
   BadRequestError,
   UnauthorizedError,
   ForbiddenError,
   NotFoundError,
   ConflictError,
+  ServerError,
 };
