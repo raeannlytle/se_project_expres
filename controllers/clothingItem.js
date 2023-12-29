@@ -1,34 +1,36 @@
-const { BadRequestError } = require("../utils/errors/BadRequestError");
-const { NotFoundError } = require("../utils/errors/NotFoundError");
-const { ForbiddenError } = require("../utils/errors/ForbiddenError");
-const { ServerError } = require("../utils/errors/ServerError");
+const {
+  BadRequestError,
+  NotFoundError,
+  ForbiddenError,
+  ServerError,
+} = require("../utils/errors");
 
 const ClothingItem = require("../models/clothingItem");
 
-const createItem = (req, res) => {
+const createItem = (req, res, next) => {
   const { name, weather, imageUrl } = req.body;
   const owner = req.user && req.user._id;
 
   ClothingItem.create({ name, weather, imageUrl, owner })
     .then((item) => {
-      res.send({ data: item });
+      res.status(200).send({ data: item });
     })
     .catch((e) => {
       if (e.name === "ValidationError") {
-        res.status(BadRequestError("Validation error")).send();
+        next(new BadRequestError("Validation error"));
       } else {
-        res.status(ServerError("Error from createItem")).send();
+        next(new ServerError("Error from createItem"));
       }
     });
 };
 
-const getItems = (req, res) => {
+const getItems = (req, res, next) => {
   ClothingItem.find({})
     .then((items) => res.status(200).send(items))
-    .catch(() => res.status(ServerError("Error from getItems")).send());
+    .catch(() => next(new ServerError("Error from getItems")));
 };
 
-const deleteItem = (req, res) => {
+const deleteItem = (req, res, next) => {
   const { itemId } = req.params;
   const userId = req.user && req.user._id;
 
@@ -36,11 +38,9 @@ const deleteItem = (req, res) => {
     .orFail()
     .then((clothingItem) => {
       if (clothingItem.owner.toString() !== userId) {
-        return res
-          .status(
-            ForbiddenError("You do not have permission to delete this item"),
-          )
-          .send();
+        return next(
+          new ForbiddenError("You do not have permission to delete this item"),
+        );
       }
 
       return ClothingItem.findByIdAndDelete(itemId).then(() =>
@@ -49,16 +49,16 @@ const deleteItem = (req, res) => {
     })
     .catch((e) => {
       if (e.name === "DocumentNotFoundError") {
-        res.status(NotFoundError("Item not found")).send();
+        next(new NotFoundError("Item not found"));
       } else if (e.name === "CastError") {
-        res.status(BadRequestError("Invalid ID format")).send();
+        next(new BadRequestError("Invalid ID format"));
       } else {
-        res.status(ServerError("Error from deleteItem")).send();
+        next(new ServerError("Error from deleteItem"));
       }
     });
 };
 
-const likeItem = (req, res) => {
+const likeItem = (req, res, next) => {
   const { _id: userId } = req.user || {};
   const { itemId } = req.params;
 
@@ -71,16 +71,16 @@ const likeItem = (req, res) => {
     .then((item) => res.status(200).send({ data: item }))
     .catch((e) => {
       if (e.name === "DocumentNotFoundError") {
-        res.status(NotFoundError("Item not found")).send();
+        next(new NotFoundError("Item not found"));
       } else if (e.name === "CastError") {
-        res.status(BadRequestError("Invalid ID format")).send();
+        next(new BadRequestError("Invalid ID format"));
       } else {
-        res.status(ServerError("Error from likeItem")).send();
+        next(new ServerError("Error from likeItem"));
       }
     });
 };
 
-const unlikeItem = (req, res) => {
+const unlikeItem = (req, res, next) => {
   const { _id: userId } = req.user || {};
   const { itemId } = req.params;
 
@@ -93,11 +93,11 @@ const unlikeItem = (req, res) => {
     .then((item) => res.status(200).send({ data: item }))
     .catch((e) => {
       if (e.name === "DocumentNotFoundError") {
-        res.status(NotFoundError("Item not found")).send();
+        next(new NotFoundError("Item not found"));
       } else if (e.name === "CastError") {
-        res.status(BadRequestError("Invalid ID format")).send();
+        next(new BadRequestError("Invalid ID format"));
       } else {
-        res.status(ServerError("Error from unlikeItem")).send();
+        next(new ServerError("Error from unlikeItem"));
       }
     });
 };

@@ -1,6 +1,7 @@
 const { celebrate, Joi, Segments } = require("celebrate");
 const router = require("express").Router();
 const authMiddleware = require("../middlewares/auth");
+const validator = require("validator");
 
 const {
   createItem,
@@ -12,15 +13,22 @@ const {
 
 const itemValidationSchema = {
   body: Joi.object({
-    name: Joi.string().required(),
-    weather: Joi.string().required(),
-    imageUrl: Joi.string().required(),
+    name: Joi.string().required().min(2).max(30),
+    weather: Joi.string().valid("hot", "warm", "cold").required(),
+    imageUrl: Joi.string()
+      .required()
+      .custom((value, helpers) => {
+        if (!validator.isURL(value)) {
+          return helpers.message("Invalid URL format");
+        }
+        return value;
+      }),
   }),
 };
 
 const itemIdValidationSchema = {
   [Segments.PARAMS]: {
-    itemId: Joi.string().required(),
+    itemId: Joi.string().required().length(24).hex(),
   },
 };
 
