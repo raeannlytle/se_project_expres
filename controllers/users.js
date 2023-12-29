@@ -81,7 +81,7 @@ const getCurrentUser = (req, res, next) => {
       if (!user) {
         return res.status(404).send({ error: "User not found" });
       }
-      res.status(200).send({ data: user });
+      return res.status(200).send({ data: user });
     })
     .catch((e) => {
       if (e.name === "CastError") {
