@@ -7,7 +7,7 @@ const { getCurrentUser, updateUserProfile } = require("../controllers/users");
 
 const updateUserProfileSchema = {
   [Segments.BODY]: {
-    name: Joi.string(),
+    name: Joi.string().min(2).max(30),
     avatar: Joi.string().custom((value, helpers) => {
       if (!validator.isURL(value)) {
         return helpers.message("Invalid URI format");
